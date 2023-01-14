@@ -1,6 +1,26 @@
-networks:
-  grafana:
+x-logging:
+  &logging
+  driver: loki
+  options:
+    loki-url: "http://localhost:3100/loki/api/v1/push"
 services:
+  app:
+    logging: *logging
+    image: app
+    ports:
+      - "8080:8080"
+    environment:
+      - OTLP_ENDPOINT=tempo:4317
+  collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: collector
+    hostname: collector
+    command: [ "--config=/etc/otc-collector.yaml" ]
+    volumes:
+      - ./collector.yaml:/etc/otc-collector.yaml
+    ports:
+      - "5555:5555"
+      - "6666:6666"
   grafana:
     image: grafana/grafana
     ports:
@@ -12,17 +32,6 @@ services:
     volumes:
       - ./datasources.yaml:/etc/grafana/provisioning/datasources/ds.yml
 
-  agent:
-    image: grafana/agent
-    command:
-      [
-        "-config.file=/etc/agent/config.yml",
-        "-metrics.wal-directory=/tmp/agent/wal"
-      ]
-    volumes:
-      - ./agent-config.yml:/etc/agent/config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-
   tempo:
     image: grafana/tempo
     ports:
@@ -32,9 +41,11 @@ services:
       - ./tempo-local.yaml:/etc/tempo/config.yml
     command: [ "--config.file=/etc/tempo/config.yml" ]
 
-  app:
-    image: app
+  loki:
+    image: grafana/loki:latest
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+      - -table-manager.retention-period=1d
+      - -table-manager.retention-deletes-enabled=true
     ports:
-      - "8080:8080"
-    environment:
-      - OTLP_ENDPOINT=agent:4317
+      - "3100:3100"
