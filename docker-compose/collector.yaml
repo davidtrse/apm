@@ -1,24 +1,3 @@
-# receivers:
-#   otlp:
-#     protocols:
-#       grpc:
-#         endpoint: 0.0.0.0:5555
-# exporters:
-#   otlp:
-#     endpoint: tempo:4317
-#     tls:
-#       insecure: true
-# service:
-#   pipelines:
-#     # metrics:
-#     #   receivers: [otlp]
-#     traces:
-#       receivers: [otlp]
-#       exporters: [otlp]
-#     # telemetry:
-#     #   logs:
-#     #     level: debug
-
 receivers:
   otlp:
     protocols:
@@ -31,9 +10,6 @@ processors:
     send_batch_size: 1024
 
 exporters:
-  prometheus:
-    endpoint: collector:6666
-    namespace: default
   otlp:
     endpoint: tempo:4317
     tls:

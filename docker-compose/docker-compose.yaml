@@ -3,6 +3,8 @@ x-logging:
   driver: loki
   options:
     loki-url: "http://localhost:3100/loki/api/v1/push"
+    loki-batch-size: 1048576
+    loki-min-backoff: 1s
 services:
   app:
     logging: *logging
@@ -20,17 +22,6 @@ services:
       - ./collector.yaml:/etc/otc-collector.yaml
     ports:
       - "5555:5555"
-      - "6666:6666"
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
-    volumes:
-      - ./datasources.yaml:/etc/grafana/provisioning/datasources/ds.yml
 
   tempo:
     image: grafana/tempo
@@ -49,3 +40,13 @@ services:
       - -table-manager.retention-deletes-enabled=true
     ports:
       - "3100:3100"
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./datasources.yaml:/etc/grafana/provisioning/datasources/ds.yml
