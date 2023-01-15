@@ -13,8 +13,8 @@ Step 2 `make run`
 ## Browse
 http://localhost:8080/hello/minh
 
-## Check Granfana Loki logs
+## Check Granfana
 http://localhost:3000
 
 ## Check Granfana Tempo logs
-http://localhost:3000
+http://localhost:3200
