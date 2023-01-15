@@ -48,6 +48,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize exporter: %v", err)
 	}
+
+	// // Print trace full information to stdout
 	// exp, _ := stdouttrace.New(stdouttrace.WithPrettyPrint())
 	// batchSpanProcessor := trace.NewBatchSpanProcessor(exp)
 	tp := trace.NewTracerProvider(

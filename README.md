@@ -1,5 +1,9 @@
 # Granfana, Loki and Tempo
 
+## Install docker driver for loki in each VPS|EC2|OS
+```
+$ docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+```
 ## Build hello-app docker image
 Step 1 `make build`
 

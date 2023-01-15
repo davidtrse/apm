@@ -1,6 +1,6 @@
 x-logging:
   &logging
-  driver: loki
+  driver: loki # shipping stdout to loki. In k8s, we can use fluentbit|promtail instead
   options:
     loki-url: "http://localhost:3100/loki/api/v1/push"
     loki-batch-size: 1048576
@@ -14,6 +14,7 @@ services:
     environment:
       - OTLP_ENDPOINT=tempo:4317
   collector:
+    # collect span for tracing
     image: otel/opentelemetry-collector:latest
     container_name: collector
     hostname: collector
