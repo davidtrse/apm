@@ -49,11 +49,7 @@ func main() {
 		log.Fatalf("failed to initialize exporter: %v", err)
 	}
 
-	// // Print trace full information to stdout
-	// exp, _ := stdouttrace.New(stdouttrace.WithPrettyPrint())
-	// batchSpanProcessor := trace.NewBatchSpanProcessor(exp)
 	tp := trace.NewTracerProvider(
-		// trace.WithSpanProcessor(batchSpanProcessor),
 		trace.WithBatcher(exporter),
 		trace.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
