@@ -72,8 +72,10 @@ func main() {
 
 		name := c.Param("name")
 		msg := helloMsg(ctx, name)
+		_ = howareyou(ctx, name)
+
 		return c.JSON(http.StatusOK, msg)
-	})
+	}, echo.WrapMiddleware(ShortVideoMiddleware))
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -82,4 +84,28 @@ func helloMsg(ctx context.Context, name string) string {
 	defer span.End()
 
 	return fmt.Sprintf("hello %s", name)
+}
+
+func howareyou(ctx context.Context, name string) string {
+	_, span := tracer.Start(ctx, "howareyou")
+	defer span.End()
+
+	return fmt.Sprintf("howareyou %s", name)
+}
+
+type ContextKey string
+
+const ContextUserKey ContextKey = "user"
+
+func ShortVideoMiddleware(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// ctx := context.WithValue(r.Context(), ContextUserKey, "val1ShortVideoMiddleware")
+
+		ctx, span := tracer.Start(r.Context(), "ShortVideoMiddleware")
+		defer span.End()
+
+		log.Errorff(r.Context(), "GET /hello/:name traceID=%s", span.SpanContext().TraceID())
+
+		h.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

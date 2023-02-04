@@ -93,7 +93,11 @@ func Error(msg string, fields ...zap.Field) {
 func Errorf(msg string, args ...interface{}) {
 	sugarLogger.Errorf(msg, args...)
 }
-
+func Errorff(ctx context.Context, msg string, args ...interface{}) {
+	tracing := fmt.Sprintf("trace_id=%s", trace.SpanFromContext(ctx).SpanContext().TraceID())
+	msg = msg + " " + tracing
+	sugarLogger.Errorf(msg, args...)
+}
 func Fatal(msg string, fields ...zap.Field) {
 	logger.Fatal(msg, fields...)
 }
